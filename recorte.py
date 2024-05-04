@@ -40,12 +40,10 @@ def eliminar_fondo_y_quedarse_con_borde_externo(imagen):
 
     # Convertir la imagen a escala de grises
     imagen_gris = cv2.cvtColor(imagen_suavizada, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('Imagen sin fondo', imagen_gris)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+
     # Aplicar un umbral para convertir el fondo blanco en negro y el objeto en blanco
     _, imagen_umbralizada = cv2.threshold(imagen_gris, 200, 255, cv2.THRESH_BINARY_INV)
-
+    imagen_umbralizada = cv2.GaussianBlur(imagen_umbralizada, (5, 5), 0)
     # Encontrar los contornos
     contornos, _ = cv2.findContours(imagen_umbralizada, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
  # Crear una imagen en blanco del mismo tamaño que la imagen original
@@ -59,15 +57,10 @@ def eliminar_fondo_y_quedarse_con_borde_externo(imagen):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-
-
-    # Aplicar la máscara a la imagen
-    imagen_sin_fondo = cv2.bitwise_and(imagen, unir_contornos(imagen_contornos))
-
-    return imagen_sin_fondo
+    return unir_contornos(imagen_contornos)
 
 # Uso de la función
-imagen = cv2.imread('/Users/fiopans1/git/InditexTechUPC2024MANDARINAS/Images/0722407802_3_1_1.png')
+imagen = cv2.imread('/Users/fiopans1/git/InditexTechUPC2024MANDARINAS/Images/2335330658_3_1_1.png')
 imagen_sin_fondo = eliminar_fondo_y_quedarse_con_borde_externo(imagen)
 cv2.imshow('Imagen sin fondo', imagen_sin_fondo)
 cv2.waitKey(0)
