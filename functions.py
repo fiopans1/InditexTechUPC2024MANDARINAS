@@ -6,8 +6,20 @@ import requests
 from PIL import Image
 import os
 import io
+
+import numpy as np
+
 import matplotlib.pyplot as plt
 import matplotlib.image as image
+
+import skimage as ski
+
+def saveImage(imagen, ruta_guardado):
+    try:
+        imagen.save(ruta_guardado)
+        print("La imagen se ha guardado exitosamente en:", ruta_guardado)
+    except Exception as e:
+        print("Error al guardar la imagen:", e)
 
 def downloadCsvImages(archivo_csv, directorio_destino):
     # Crear el directorio destino si no existe
@@ -64,3 +76,22 @@ def plotImage(imageRoute):
     plt.imshow(imagen)
     plt.axis('off')  # Desactivar los ejes
     plt.show()
+
+def compareReferenceWithImage(imageReference, imageToCompareWith):
+    return True
+    
+def separarRopa(inImage):
+    imageHSV = ski.color.rgb2hsv(inImage)
+    
+    # Separar las partes de la imagen donde el verde tome ciertos valores de intensidad y saturación.
+    lower_mask = imageHSV[:,:,0] > 0.15 # Threshold inferior
+    upper_mask = imageHSV[:,:,0] < 0.45 # Threshold superior
+    saturation_mask = imageHSV[:,:,1] > 0.35
+    
+    mask = upper_mask*lower_mask*saturation_mask
+    red = inImage[:,:,0]*mask
+    green = inImage[:,:,1]*mask
+    blue = inImage[:,:,2]*mask
+    imagenRopaSeparada = np.dstack((red,green,blue))
+
+    return imagenRopaSeparada
