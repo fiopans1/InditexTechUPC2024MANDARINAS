@@ -2,10 +2,10 @@ import requests
 import csv
 import os
 import pandas as pd
-import requests
 from PIL import Image
-import os
 import io
+
+import cv2
 
 import numpy as np
 
@@ -80,7 +80,7 @@ def plotImage(imageRoute):
 def compareReferenceWithImage(imageReference, imageToCompareWith):
     return True
     
-def separarRopa(inImage):
+def deleteBackground(inImage):
     imageHSV = ski.color.rgb2hsv(inImage)
     
     # Separar las partes de la imagen donde el verde tome ciertos valores de intensidad y saturación.
@@ -95,3 +95,17 @@ def separarRopa(inImage):
     imagenRopaSeparada = np.dstack((red,green,blue))
 
     return imagenRopaSeparada
+
+def compararHistogramas(imagen1, imagen2):
+    imagen1 = cv2.cvtColor(imagen1, cv2.COLOR_BGR2HSV)
+    imagen2 = cv2.cvtColor(imagen2, cv2.COLOR_BGR2HSV)
+
+    imagen1 = cv2.resize(imagen1, (1024,1024))
+    imagen2 = cv2.resize(imagen2, (1024,1024))
+
+    imagen1Histogram = cv2.calcHist(imagen1, [0,1,2], None, [32,32,32], ranges=[0,230,0,230,0,230])
+    imagen2Histogram = cv2.calcHist(imagen2, [0,1,2], None, [32,32,32], ranges=[0,230,0,230,0,230])
+
+    comparationResult = cv2.compareHist(imagen1Histogram, imagen2Histogram, 0)
+
+    return comparationResult
