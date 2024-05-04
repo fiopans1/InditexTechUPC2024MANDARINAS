@@ -17,8 +17,8 @@ def calcular_hu_moments(imagen):
     return hu_moments
 
 # Leer las dos imágenes
-imagen1 = cv2.imread('/Users/fiopans1/git/InditexTechUPC2024MANDARINAS/Images/0722407802_3_1_1.png')
-imagen2 = cv2.imread('/Users/fiopans1/git/InditexTechUPC2024MANDARINAS/Images/2335330658_3_1_1.png')
+imagen1 = cv2.imread('imagen1.jpg')
+imagen2 = cv2.imread('imagen2.jpg')
 
 # Calcular los momentos de Hu de cada imagen
 hu_moments1 = calcular_hu_moments(imagen1)
