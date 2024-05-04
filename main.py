@@ -1,7 +1,7 @@
 from functions import *
 
-imagesFolderPath = "./Images"
-similarImagesFolderPath = "./Images/SimilarImages"
+imagesFolderPath = "./Images/"
+similarImagesFolderPath = "./SimilarImages/"
 referenceImage = ""
 
 compareSetNumber = 5 
@@ -14,8 +14,11 @@ def main():
     imagesInFolder = os.listdir(imagesFolderPath)
 
     for image in imagesInFolder:
-        if compareReferenceWithImage(referenceImage, image):
-            saveImage(image, similarImagesFolderPath)
+        if (image.endswith(".png")):
+            imagen_pillow = Image.open(imagesFolderPath + image)
+            if compareReferenceWithImage(referenceImage, imagen_pillow):
+                saveImage(imagen_pillow, similarImagesFolderPath + image)
+
 
 if __name__ == "__main__":
     main()
