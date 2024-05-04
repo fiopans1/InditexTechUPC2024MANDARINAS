@@ -121,15 +121,26 @@ def deleteBackground(inImage):
 
     return imagenRopaSeparada
 
-def compararHistogramas(imagen1, imagen2):
-    imagen1 = cv2.cvtColor(imagen1, cv2.COLOR_BGR2HSV)
-    imagen2 = cv2.cvtColor(imagen2, cv2.COLOR_BGR2HSV)
+def crearMascara(imagen1):
+    imagenEscalaGrises = cv2.cvtColor(imagen1, cv2.COLOR_BGR2GRAY)
+    ret, thresh = cv2.threshold(imagenEscalaGrises, 0, 230, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    
+    thresh = cv2.resize(thresh, (1024, 1024))  
 
+    thresh = np.uint8(thresh)
+
+    return thresh
+
+
+def compararHistogramas(imagen1, imagen2, maskRef, maskCompare):
     imagen1 = cv2.resize(imagen1, (1024,1024))
     imagen2 = cv2.resize(imagen2, (1024,1024))
 
-    imagen1Histogram = cv2.calcHist(imagen1, [0,1,2], None, [32,32,32], ranges=[0,230,0,230,0,230])
-    imagen2Histogram = cv2.calcHist(imagen2, [0,1,2], None, [32,32,32], ranges=[0,230,0,230,0,230])
+    maskRef = np.uint8(maskRef)
+    maskCompare = np.uint8(maskCompare)
+
+    imagen1Histogram = cv2.calcHist([imagen1], [0,1,2], maskRef, [32,32,32], ranges=[0,230,0,230,0,230])
+    imagen2Histogram = cv2.calcHist([imagen2], [0,1,2], maskCompare, [32,32,32], ranges=[0,230,0,230,0,230])
 
     comparationResult = cv2.compareHist(imagen1Histogram, imagen2Histogram, 0)
 

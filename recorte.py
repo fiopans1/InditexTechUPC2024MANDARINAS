@@ -1,6 +1,7 @@
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
+
 def recortar_contornos(imagen):
     # Convertir la imagen a escala de grises
     imagen_gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
@@ -50,8 +51,8 @@ def eliminar_fondo_y_quedarse_con_borde_externo(imagen):
     return unir_contornos(imagen_contornos)
 
 # Uso de la función
-imagen = cv2.imread('/Users/fiopans1/git/InditexTechUPC2024MANDARINAS/Images/2335330658_3_1_1.png')
-imagen_sin_fondo = eliminar_fondo_y_quedarse_con_borde_externo(imagen)
-cv2.imshow('Imagen sin fondo', imagen_sin_fondo)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# imagen = cv2.imread('./Images/0039678800_3_1_1.png')
+# imagen_sin_fondo = eliminar_fondo_y_quedarse_con_borde_externo(imagen)
+# cv2.imshow('Imagen sin fondo', imagen_sin_fondo)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
