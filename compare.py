@@ -24,7 +24,7 @@ def main():
 
             maskImgCompare = crearMascara(imagen_cv2)
 
-            if compareReferenceWithImage(referenceImage, imagen_cv2, maskImgRef, maskImgCompare) > 0.1:
+            if compareReferenceWithImage(imagen_reference_cv2, imagen_cv2, maskImgRef, maskImgCompare) > 0.1:
                 imagen_cv2 = cv2.resize(imagen_cv2, (1024,1024))
                 bestImages.append(imagen_cv2)
     

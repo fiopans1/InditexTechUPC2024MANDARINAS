@@ -107,8 +107,9 @@ def compareReferenceWithImage(imageReference, imageToCompareWith, maskImgRef, ma
     #recortar_contornos(imagen_cv2)
     diferencia = compararHistogramas(imageReference, imageToCompareWith, maskImgRef, maskImgCompare)
     if (diferencia > 0.1):
-        print("La diferencia de color medio entre la imagen de referencia y: " + image + " imágenes es:", diferencia)
+        print("Diferencia: ", diferencia)
         return diferencia
+    return 0
     
 def deleteBackground(inImage):
     imageHSV = ski.color.rgb2hsv(inImage)
@@ -130,7 +131,7 @@ def crearMascara(imagen1):
     imagenEscalaGrises = cv2.cvtColor(imagen1, cv2.COLOR_BGR2GRAY)
     ret, thresh = cv2.threshold(imagenEscalaGrises, 0, 230, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     
-    thresh = cv2.resize(thresh, (256, 256))  
+    thresh = cv2.resize(thresh, (1024, 1024))  
 
     thresh = np.uint8(thresh)
 
@@ -138,8 +139,8 @@ def crearMascara(imagen1):
 
 
 def compararHistogramas(imagen1, imagen2, maskRef, maskCompare):
-    imagen1 = cv2.resize(imagen1, (256,256))
-    imagen2 = cv2.resize(imagen2, (256,256))
+    imagen1 = cv2.resize(imagen1, (1024,1024))
+    imagen2 = cv2.resize(imagen2, (1024,1024))
 
     maskRef = np.uint8(maskRef)
     maskCompare = np.uint8(maskCompare)
