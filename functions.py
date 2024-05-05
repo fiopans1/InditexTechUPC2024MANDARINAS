@@ -109,11 +109,10 @@ def plotImage(imageRoute):
 def compareReferenceWithImage(imageReference, imageToCompareWith, maskImgRef, maskImgCompare, plantilla, carpeta_imagenes, nombre_imagen):
     #saveImage(imagen_pillow, similarImagesFolderPath + image)
     #recortar_contornos(imagen_cv2)
-    diferenciaForma = compararForma(plantilla, carpeta_imagenes, nombre_imagen)
+    #diferenciaForma = compararForma(plantilla, carpeta_imagenes, nombre_imagen)
     diferenciaHistograma = compararHistogramas(imageReference, imageToCompareWith, maskImgRef, maskImgCompare)
-    if (diferenciaHistograma > 0.1 and diferenciaForma > 0.8):
+    if (diferenciaHistograma > 0.1):
         print("DiferenciaHistograma: ", diferenciaHistograma)
-        print("DiferenciaForma: ", diferenciaForma)
 
         return diferenciaHistograma
     return 0

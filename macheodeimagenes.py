@@ -1,7 +1,9 @@
+import os
 import numpy as np
 from skimage import io
 from skimage.metrics import structural_similarity as compare_ssim
 import cv2
+
 def fillGaps(imagen_umbralizada):
     if len(imagen_umbralizada.shape) > 2:
         imagen_umbralizada = cv2.cvtColor(imagen_umbralizada, cv2.COLOR_BGR2GRAY)
