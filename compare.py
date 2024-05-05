@@ -3,7 +3,7 @@ from recorte import *
 
 imagesFolderPath = "./Images/"
 similarImagesFolderPath = "./SimilarImages/"
-referenceImage = "3153002630_6_1_1.png"
+referenceImage = "0039678800_3_1_1.png"
 
 compareSetNumber = 5 
 compareMinSimilarity = 10
@@ -17,6 +17,9 @@ def main():
     imagesInFolder = os.listdir(imagesFolderPath)
     maskImgRef = crearMascara(imagen_reference_cv2)
 
+    plantilla = eliminar_contorno(imagen_reference_cv2)
+
+
     bestImages = []
     for image in imagesInFolder:
         if (image.endswith(".png")):
@@ -24,7 +27,7 @@ def main():
 
             maskImgCompare = crearMascara(imagen_cv2)
 
-            if compareReferenceWithImage(imagen_reference_cv2, imagen_cv2, maskImgRef, maskImgCompare) > 0.1:
+            if compareReferenceWithImage(imagen_reference_cv2, imagen_cv2, maskImgRef, maskImgCompare, plantilla, imagesFolderPath, image) > 0.1:
                 imagen_cv2 = cv2.resize(imagen_cv2, (1024,1024))
                 bestImages.append(imagen_cv2)
     

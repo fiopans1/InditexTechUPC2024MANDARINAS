@@ -14,6 +14,9 @@ import matplotlib.image as image
 
 import skimage as ski
 
+from skimage.metrics import structural_similarity as ssim
+
+
 def saveImage(imagen, ruta_guardado):
     try:
         imagen.save(ruta_guardado)
@@ -94,6 +97,7 @@ def descargar_imagenes_csv_ultima_columna(ruta_csv, directorio_imagenes):
             # Abrir la imagen en memoria y guardarla como PNG
             imagen = Image.open(io.BytesIO(respuesta.content))
             imagen.save(ruta_imagen, 'PNG')
+
 def plotImage(imageRoute):
     imagen = image.imread(imageRoute)
 
@@ -102,36 +106,35 @@ def plotImage(imageRoute):
     plt.axis('off')  # Desactivar los ejes
     plt.show()
 
-def compareReferenceWithImage(imageReference, imageToCompareWith, maskImgRef, maskImgCompare):
+def compareReferenceWithImage(imageReference, imageToCompareWith, maskImgRef, maskImgCompare, plantilla, carpeta_imagenes, nombre_imagen):
     #saveImage(imagen_pillow, similarImagesFolderPath + image)
     #recortar_contornos(imagen_cv2)
-    diferencia = compararHistogramas(imageReference, imageToCompareWith, maskImgRef, maskImgCompare)
-    if (diferencia > 0.1):
-        print("Diferencia: ", diferencia)
-        return diferencia
-    return 0
-    
-def deleteBackground(inImage):
-    imageHSV = ski.color.rgb2hsv(inImage)
-    
-    # Separar las partes de la imagen donde el verde tome ciertos valores de intensidad y saturación.
-    lower_mask = imageHSV[:,:,0] > 0.15 # Threshold inferior
-    upper_mask = imageHSV[:,:,0] < 0.45 # Threshold superior
-    saturation_mask = imageHSV[:,:,1] > 0.35
-    
-    mask = upper_mask*lower_mask*saturation_mask
-    red = inImage[:,:,0]*mask
-    green = inImage[:,:,1]*mask
-    blue = inImage[:,:,2]*mask
-    imagenRopaSeparada = np.dstack((red,green,blue))
+    diferenciaForma = compararForma(plantilla, carpeta_imagenes, nombre_imagen)
+    diferenciaHistograma = compararHistogramas(imageReference, imageToCompareWith, maskImgRef, maskImgCompare)
+    if (diferenciaHistograma > 0.1 and diferenciaForma > 0.8):
+        print("DiferenciaHistograma: ", diferenciaHistograma)
+        print("DiferenciaForma: ", diferenciaForma)
 
-    return imagenRopaSeparada
+        return diferenciaHistograma
+    return 0
+
+def compararForma(plantilla, carpeta_imagenes, nombre_imagen):
+    imagen_a_guardar = cv2.imread(os.path.join(carpeta_imagenes, nombre_imagen))
+    imagen_a_comprobar = eliminar_contorno(imagen_a_guardar)
+    # Asegurarse de que las imágenes tienen el mismo tamaño
+
+    if imagen_a_comprobar is not None:
+        diferenciaForma = ssim(plantilla,imagen_a_comprobar)
+        if (diferenciaForma>umbral):
+            return diferenciaForma
+        return 0
+            #lista_coincidencias.append((imagen_a_guardar,sim))
 
 def crearMascara(imagen1):
     imagenEscalaGrises = cv2.cvtColor(imagen1, cv2.COLOR_BGR2GRAY)
     ret, thresh = cv2.threshold(imagenEscalaGrises, 0, 230, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
     
-    thresh = cv2.resize(thresh, (1024, 1024))  
+    thresh = cv2.resize(thresh, (1024, 1024))
 
     thresh = np.uint8(thresh)
 
@@ -151,3 +154,20 @@ def compararHistogramas(imagen1, imagen2, maskRef, maskCompare):
     comparationResult = cv2.compareHist(imagen1Histogram, imagen2Histogram, 0)
 
     return comparationResult
+
+def eliminar_contorno(imagen):
+    imagen = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
+    imagen = cv2.resize(imagen, (1024,1024))
+    _, imagen_umbralizada = cv2.threshold(imagen, 254, 255, cv2.THRESH_BINARY)
+    invertida = 255 - imagen_umbralizada
+    contornos, _ = cv2.findContours(invertida, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    imagen_contornos = np.zeros_like(invertida)
+    cv2.drawContours(imagen_contornos, contornos, -1, 255, thickness=cv2.FILLED)
+    #resultado = cv2.bitwise_and(imagen, imagen, mask=imagen_contornos)
+    # cv2.imshow('Imagen', imagen_contornos)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    return imagen_contornos
+
+#definimos umbral
+umbral = 0.8
